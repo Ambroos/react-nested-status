@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react'),
+    PropTypes = require('prop-types'),
     createSideEffect = require('react-side-effect');
 
 var _serverStatus = 200;
@@ -19,7 +20,7 @@ var NestedStatus = createSideEffect(function handleChange(propsList) {
   displayName: 'NestedStatus',
 
   propTypes: {
-    code: React.PropTypes.number.isRequired
+    code: PropTypes.number.isRequired
   },
 
   statics: {
