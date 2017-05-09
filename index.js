@@ -37,9 +37,14 @@ var sideEffected = withSideEffect(
 )(NestedStatus);
 
 var getState = sideEffected.peek;
+var getFinalState = sideEffected.rewind;
 
 sideEffected.peek = function() {
   return getState() || 200;
+};
+
+sideEffected.rewind = function() {
+  return getFinalState() || 200;
 };
 
 module.exports = sideEffected;

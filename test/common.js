@@ -105,4 +105,8 @@ describe('NestedStatus.rewind', function () {
     NestedStatus.rewind();
     expect(NestedStatus.peek()).to.equal(200);
   });
+  it('returns 200 if no instance was ever mounted', function () {
+    expect(NestedStatus.rewind()).to.equal(200);
+    expect(NestedStatus.peek()).to.equal(200);
+  });
 });
