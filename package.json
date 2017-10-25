@@ -1,6 +1,6 @@
 {
   "name": "react-nested-status",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A nested, stateful status code thing for React. Based on react-document-title.",
   "main": "index.js",
   "peerDependencies": {
