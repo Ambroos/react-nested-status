@@ -1,38 +1,50 @@
 'use strict';
 
 var React = require('react'),
-    createSideEffect = require('react-side-effect');
+    PropTypes = require('prop-types'),
+    withSideEffect = require('react-side-effect');
 
-var _serverStatus = 200;
-
-function getStatusFromPropsList(propsList) {
+function reducePropsToState(propsList) {
   var innermostProps = propsList[propsList.length - 1];
   if (innermostProps) {
     return innermostProps.code;
   }
 }
 
-var NestedStatus = createSideEffect(function handleChange(propsList) {
-  var status = getStatusFromPropsList(propsList);
-  _serverStatus = status || 200;
-}, {
-  displayName: 'NestedStatus',
+function handleStateChangeOnClient(code) {
+  return code;
+}
 
-  propTypes: {
-    code: React.PropTypes.number.isRequired
-  },
+function NestedStatus() {}
+NestedStatus.prototype = Object.create(React.Component.prototype);
 
-  statics: {
-    peek: function () {
-      return _serverStatus;
-    },
+NestedStatus.displayName = 'NestedStatus';
+NestedStatus.propTypes = {
+  code: PropTypes.number.isRequired
+};
 
-    rewind: function () {
-      var status = _serverStatus;
-      this.dispose();
-      return status;
-    }
+NestedStatus.prototype.render = function () {
+  if (this.props.children) {
+    return React.Children.only(this.props.children);
+  } else {
+    return null;
   }
-});
+};
 
-module.exports = NestedStatus;
+var sideEffected = withSideEffect(
+  reducePropsToState,
+  handleStateChangeOnClient
+)(NestedStatus);
+
+var getState = sideEffected.peek;
+var getFinalState = sideEffected.rewind;
+
+sideEffected.peek = function() {
+  return getState() || 200;
+};
+
+sideEffected.rewind = function() {
+  return getFinalState() || 200;
+};
+
+module.exports = sideEffected;

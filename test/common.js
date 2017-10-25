@@ -3,6 +3,8 @@
 'use strict';
 var expect = require('expect.js'),
     React = require('react'),
+    ReactDOMServer = require('react-dom/server'),
+    createReactClass = require('create-react-class'),
     NestedStatus = require('../');
 
 describe('NestedStatus', function () {
@@ -12,18 +14,18 @@ describe('NestedStatus', function () {
     expect(el.type.displayName).not.to.be.empty();
   });
   it('hides itself from the DOM', function () {
-    var Component = React.createClass({
+    var Component = createReactClass({
       render: function () {
         return React.createElement(NestedStatus, {code: 2727},
           React.createElement('div', null, 'hello')
         );
       }
     });
-    var markup = React.renderToStaticMarkup(React.createElement(Component));
+    var markup = ReactDOMServer.renderToStaticMarkup(React.createElement(Component));
     expect(markup).to.equal('<div>hello</div>');
   });
   it('throws an error if it has multiple children', function (done) {
-    var Component = React.createClass({
+    var Component = createReactClass({
       render: function () {
         return React.createElement(NestedStatus, {code: 2727},
           React.createElement('div', null, 'hello'),
@@ -32,14 +34,14 @@ describe('NestedStatus', function () {
       }
     });
     expect(function () {
-      React.renderToStaticMarkup(React.createElement(Component));
+      ReactDOMServer.renderToStaticMarkup(React.createElement(Component));
     }).to.throwException(function (e) {
-      expect(e.message).to.match(/^Invariant Violation:/);
+      expect(e.message).to.match(/React.Children.only expected/);
       done();
     });
   });
   it('works with complex children', function () {
-    var Component1 = React.createClass({
+    var Component1 = createReactClass({
       render: function() {
         return React.createElement('p', null,
           React.createElement('span', null, 'c'),
@@ -47,7 +49,7 @@ describe('NestedStatus', function () {
         );
       }
     });
-    var Component2 = React.createClass({
+    var Component2 = createReactClass({
       render: function () {
         return React.createElement(NestedStatus, {code: 2727},
           React.createElement('div', null,
@@ -58,7 +60,7 @@ describe('NestedStatus', function () {
         );
       }
     });
-    var markup = React.renderToStaticMarkup(React.createElement(Component2));
+    var markup = ReactDOMServer.renderToStaticMarkup(React.createElement(Component2));
     expect(markup).to.equal(
       '<div>' +
         '<div>a</div>' +
@@ -76,7 +78,7 @@ describe('NestedStatus', function () {
 
 describe('NestedStatus.rewind', function () {
   it('clears the mounted instances', function () {
-    React.renderToStaticMarkup(
+    ReactDOMServer.renderToStaticMarkup(
       React.createElement(NestedStatus, {code: 201},
         React.createElement(NestedStatus, {code: 202}, React.createElement(NestedStatus, {code: 203}))
       )
@@ -87,7 +89,7 @@ describe('NestedStatus.rewind', function () {
   });
   it('returns the latest status code', function () {
     var code = 200;
-    React.renderToStaticMarkup(
+    ReactDOMServer.renderToStaticMarkup(
       React.createElement(NestedStatus, {code: 404},
         React.createElement(NestedStatus, {code: 500}, React.createElement(NestedStatus, {code: code}))
       )
@@ -95,12 +97,16 @@ describe('NestedStatus.rewind', function () {
     expect(NestedStatus.rewind()).to.equal(code);
   });
   it('returns 200 if no mounted instances exist', function () {
-    React.renderToStaticMarkup(
+    ReactDOMServer.renderToStaticMarkup(
       React.createElement(NestedStatus, {code: 500},
         React.createElement(NestedStatus, {code: 404}, React.createElement(NestedStatus, {code: 301}))
       )
     );
     NestedStatus.rewind();
+    expect(NestedStatus.peek()).to.equal(200);
+  });
+  it('returns 200 if no instance was ever mounted', function () {
+    expect(NestedStatus.rewind()).to.equal(200);
     expect(NestedStatus.peek()).to.equal(200);
   });
 });
