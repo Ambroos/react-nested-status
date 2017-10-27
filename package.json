@@ -4,8 +4,8 @@
   "description": "A nested, stateful status code thing for React. Based on react-document-title.",
   "main": "index.js",
   "peerDependencies": {
-    "prop-types": "^15.5.8",
-    "react": "^15.5.4"
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0"
   },
   "scripts": {
     "test": "mocha",
@@ -35,9 +35,9 @@
     "global": "^4.3.0",
     "jshint": "^2.5.6",
     "mocha": "^2.0.1",
-    "prop-types": "^15.5.8",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "dependencies": {
     "react-side-effect": "^1.1.0"
